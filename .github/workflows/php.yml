@@ -29,10 +29,18 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: composer install -q --prefer-dist --no-progress
 
     - name: Install Pint
       run: composer global require laravel/pint
 
     - name: Run Pint
-      run: pint --test
+      run: pint
+
+    - name: Commit changes
+      run: |
+        git config user.name "github-actions"
+        git config user.email "bot@laracasts.com"
+        git add .
+        git commit -m "Code cleanup using Pint"
+        git push
