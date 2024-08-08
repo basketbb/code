@@ -30,7 +30,7 @@ jobs:
       - name: "Execute Laravel Pint"
         run: "pint"
       # Commit back to repo
-      - uses: actions/checkout@v4
+      - name: "Commit Changes"
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
