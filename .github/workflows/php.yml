@@ -8,18 +8,36 @@ jobs:
   laravel-pint:
 
     runs-on: ubuntu-latest
+    env:
+      extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, igbinary, msgpack, lzf, zstd, lz4, memcached, gmp, :php-psr
+      key: php-extensions-v1
 
     steps:
     - uses: actions/checkout@v4
       with:
         ref: ${{ github.head_ref }}
 
+    - name: Setup cache environment
+      id: extcache
+      uses: shivammathur/cache-extensions@v1
+      with:
+        php-version: '8.3'
+        extensions: ${{ env.extensions }}
+        key: ${{ env.key }}
+
+    - name: Cache extensions
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.extcache.outputs.dir }}
+        key: ${{ steps.extcache.outputs.key }}
+        restore-keys: ${{ steps.extcache.outputs.key }}
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
         tools: composer:v2
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, igbinary, msgpack, lzf, zstd, lz4, memcached, gmp, :php-psr
+        extensions: ${{ env.extensions }}
 
     - name: Cache Composer packages
       id: composer-cache
@@ -44,5 +62,5 @@ jobs:
         git config user.name "github-actions"
         git config user.email "bot@laracasts.com"
         git add .
-        git commit -m "Code cleanup using Pint"
+        git commit -m "Code cleanup using Pint" || exit 0
         git push
