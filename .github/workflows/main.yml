@@ -1,10 +1,10 @@
 name: "Code Cleanup"
 
-on: 
+on:
   pull_request:
     branches:
       - main
-  
+
 jobs:
   laravel-pint:
 
@@ -28,7 +28,13 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       # Execute Laravel Pint
       - name: "Execute Laravel Pint"
-        run: "pint --test"
+        run: "pint"
       # Commit back to repo
-    
-    
+      - uses: actions/checkout@v4
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add .
+          git commit -m "Code Cleanup via Laravel Pint"
+          git push
+
