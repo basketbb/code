@@ -31,6 +31,13 @@ jobs:
 
       # Execute Pint
       - name: "Run Pint"
-        run: pint --test
+        run: pint
 
       # Commit back to the PR
+      - name: "Commit Changes"
+        run: |
+          git config user.name "github-actions"
+          git config user.email "bot@laracasts.com"
+          git add .
+          git commit -m "Code cleanup with Pint."
+          git push
