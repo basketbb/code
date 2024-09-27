@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        php: ['8.3', '8.4']
+        connection: ['mysql', 'postgres']
 
     services:
       redis:
@@ -19,12 +19,20 @@ jobs:
         ports:
           - 6379:6379
       mysql:
-        image: mysql:8.0
+        image: ${{ matrix.connection == 'mysql' && 'mysql:8.0' || '' }}
         ports:
           - 3306:3306
         env:
           MYSQL_DATABASE: laravel
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      postgres:
+        image: ${{ matrix.connection == 'postgres' && 'postgres:17.0' || '' }}
+        ports:
+          - 5432:3306
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: root
+          POSTGRES_DB: laravel
 
     steps:
       - name: Checkout Code
@@ -48,4 +56,6 @@ jobs:
         run: php artisan key:generate
 
       - name: Run Tests
+        env:
+          DB_CONNECTION: ${{ matrix.connection }}
         run: php artisan test --compact --coverage --min=80
