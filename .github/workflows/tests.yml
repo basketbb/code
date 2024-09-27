@@ -12,6 +12,11 @@ jobs:
     strategy:
       matrix:
         connection: ['mysql', 'pgsql']
+        include:
+          - connection: 'mysql'
+            ports: 3306:3306
+          - connection: 'pgsql'
+            ports: 5432:5432
 
     services:
       redis:
@@ -21,14 +26,14 @@ jobs:
       mysql:
         image: ${{ matrix.connection == 'mysql' && 'mysql:8.0' || '' }}
         ports:
-          - 3306:3306
+          - ${{ matrix.ports }}
         env:
           MYSQL_DATABASE: laravel
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
       postgres:
         image: ${{ matrix.connection == 'pgsql' && 'postgres:17.0' || '' }}
         ports:
-          - 5432:3306
+          - ${{ matrix.ports }}
         env:
           POSTGRES_PASSWORD: password
           POSTGRES_USER: root
