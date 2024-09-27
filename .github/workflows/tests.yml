@@ -15,8 +15,10 @@ jobs:
         include:
           - connection: 'mysql'
             port: 3306
+            password: ''
           - connection: 'pgsql'
             port: 5432
+            password: 'password'
 
     services:
       redis:
@@ -64,4 +66,5 @@ jobs:
         env:
           DB_CONNECTION: ${{ matrix.connection }}
           DB_PORT: ${{ matrix.port }}
+          DB_PASSWORD: ${{ matrix.password }}
         run: php artisan test --compact --coverage --min=80
