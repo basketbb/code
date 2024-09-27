@@ -14,9 +14,9 @@ jobs:
         connection: ['mysql', 'pgsql']
         include:
           - connection: 'mysql'
-            ports: 3306:3306
+            port: 3306
           - connection: 'pgsql'
-            ports: 5432:5432
+            port: 5432
 
     services:
       redis:
@@ -26,14 +26,14 @@ jobs:
       mysql:
         image: ${{ matrix.connection == 'mysql' && 'mysql:8.0' || '' }}
         ports:
-          - ${{ matrix.ports }}
+          - ${{ matrix.port }}:${{ matrix.port }}
         env:
           MYSQL_DATABASE: laravel
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
       postgres:
         image: ${{ matrix.connection == 'pgsql' && 'postgres:17.0' || '' }}
         ports:
-          - ${{ matrix.ports }}
+          - ${{ matrix.port }}:${{ matrix.port }}
         env:
           POSTGRES_PASSWORD: password
           POSTGRES_USER: root
@@ -63,4 +63,5 @@ jobs:
       - name: Run Tests
         env:
           DB_CONNECTION: ${{ matrix.connection }}
+          DB_PORT: ${{ matrix.port }}
         run: php artisan test --compact --coverage --min=80
