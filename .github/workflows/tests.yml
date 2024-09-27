@@ -9,6 +9,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php: ['8.3', '8.4']
+
     services:
       redis:
         image: redis:7.4
@@ -29,9 +33,10 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          php-version: '8.3'
+          php-version: ${{ matrix.php }}
           nova-email: ${{ secrets.NOVA_EMAIL }}
           nova-password: ${{ secrets.NOVA_PASSWORD }}
+          coverage: xdebug
 
       - name: Install Project Dependencies
         run: composer install -q --no-interaction --no-progress
